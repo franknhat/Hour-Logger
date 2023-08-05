@@ -12,3 +12,23 @@ Idea on what I want:
 - a way to import and export the data
   - too keep it simple I might just save it on a google sheet or excel sheet like as a database for the time being to keep it super simple. Also considering its a side project made mostly for my own self, it does not make sense to use a database
 
+# Language Choice
+Requirements:
+- Cross Platform 
+  - I just want the flexability to easiy switch platforms by only changing GUI aspects rather than logical aspects of the code
+- Less familiar language
+  - I want something that I am less familiar with more as a challenge and to learn a "new" language
+- Good support
+  - If this ends up being something I use day to day (which I might but I dont know if I will) it needs to be a language that is still being used
+  - This also means that documentation is plentiful or enouph to get work done and well written
+
+Language Choice: Dart *May change in the future*
+
+Why not other common languages
+- I am decently familiar with Python and JS to where I personally dont want to consider those two as options even though I have not made my own side projects with them
+- C/C++ ... I want to keep my sanity
+- C# I use for work so I personally dont want to use it for this
+- Java just feels verbose and clunky from the short time I have used it
+- Other JVMs: personally I do not know how supported the other JVM languages are... I bet they are fine. In fact, I personally wanted to use Scala; however, that is due to me liking the language the few times I have used in class
+
+I personally feel like Dart fits best with my requirements and therefore decided that. Its cross platform capabilities is one of its selling points. It also a language I have never used before in my life. Not even a hello world. This is unlike the choices above. Is dart the best choice... most certainly not. I feel like a sane person would choose JS since it is used every where, by many companies, etc.
