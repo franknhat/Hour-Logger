@@ -12,7 +12,7 @@ Idea on what I want:
 - a way to import and export the data
   - too keep it simple I might just save it on a google sheet or excel sheet like as a database for the time being to keep it super simple. Also considering its a side project made mostly for my own self, it does not make sense to use a database
 
-# Language Choice
+## Language Choice
 Requirements:
 - Cross Platform 
   - I just want the flexability to easiy switch platforms by only changing GUI aspects rather than logical aspects of the code
@@ -32,3 +32,9 @@ Why not other common languages
 - Other JVMs: personally I do not know how supported the other JVM languages are... I bet they are fine. In fact, I personally wanted to use Scala; however, that is due to me liking the language the few times I have used in class
 
 I personally feel like Dart fits best with my requirements and therefore decided that. Its cross platform capabilities is one of its selling points. It also a language I have never used before in my life. Not even a hello world. This is unlike the choices above. Is dart the best choice... most certainly not. I feel like a sane person would choose JS since it is used every where, by many companies, etc.
+
+### Framework Choice
+
+The plan is to make it cross platform. Realistically this wont me the code can just be used on all platforms since there are different interfaces, I hope to make the logic easily transferable and extendable.
+
+So due to what was stated above, a quick google search and I've decided to use the flutter framework to create cross platform apps with my code.
