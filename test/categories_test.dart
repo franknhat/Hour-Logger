@@ -8,11 +8,13 @@ void main(){
   });
 
   test('readJsonFileToMap', () async {
-    writeToFile('test.json', '{"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]}');
-  
+    var path = '${Directory.current.path}/test.json';
+    var file = File(path);
+    file.writeAsString('{"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]}');
+    
     expect((await readJsonFileToMap('${Directory.current.path}/test.json')).isNotEmpty, true);
   
-    removeFile('test.json');
+    file.delete();
   });
 
   test('parseJsonMap', () async { 
@@ -20,18 +22,4 @@ void main(){
     
     expect(parseJsonMap(map), {"trash1":[], "trash2":["rubbish"]});
   });
-}
-
-void writeToFile(String filename, dynamic data) async {
-  var path = '${Directory.current.path}/$filename';
-
-  var file = File(path);
-
-  file.writeAsString(data);
-}
-
-void removeFile(String filename){
-  var path = '${Directory.current.path}/$filename';
-
-  File(path).delete();
 }

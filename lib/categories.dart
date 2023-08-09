@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-final path = Directory.current.path + '/lib/categories.json';
+final path = '${Directory.current.path}/lib/categories.json';
 
 Future<Map> readJsonFileToMap(String filePath) async {
   var fileData = await File(filePath).readAsString();
@@ -12,7 +12,7 @@ Future<Map> readJsonFileToMap(String filePath) async {
 Map parseJsonMap(dynamic map){
   List<dynamic> listCategories = map["categories"];
 
-  var parsed = new Map();
+  var parsed = {};
   
   for (var element in listCategories) { 
     parsed[element["name"].toString()] = element["subcategories"]; 
