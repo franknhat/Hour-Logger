@@ -1,0 +1,12 @@
+{
+    "categories":[
+      {
+        "name":"trash1", 
+        "subcategories":[]
+      },
+      {
+        "name":"trash2", 
+        "subcategories":["rubbish"]
+      }
+    ]
+}
