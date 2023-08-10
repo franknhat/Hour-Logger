@@ -49,6 +49,37 @@ void main(){
 
     file.delete();
   });
-}
 
-//TODO add subcategories test
+  group('add subcategories', () {
+    test('add subcategory to an existing category', () {
+      var categories = {'trash1':[], 'trash2':[]};
+
+      expect(addSubCategory(categories, 'trash1', 'subcategory', (_, __, ___) => {}), {'trash1':['subcategory'], 'trash2':[]});
+    });
+
+    test('try to add existing subcategory to existing category', () {
+      var categories = {'trash1':['subcategory'], 'trash2':[]};
+
+      expect(() => addSubCategory(categories, 'trash1', 'subcategory', (_, __, ___) => {}), throwsException);
+    });
+
+    test('try to add subcategories to nonexisting categories', () {
+      var categories = {'trash1':[], 'trash2':[]};
+
+      expect(() => addSubCategory(categories, 'NonExistant', 'should fail', (_, __, ___) => {}), throwsException);
+    });
+
+    test('addSubCategoryToJson', () async {
+      var categories = {'trash1':[], 'trash2':[]};
+      
+      addSubCategoryToJson(categories, 'trash1', 'yeet', path);
+
+      var contents = await file.readAsString();
+
+      expect(contents.contains('yeet'), true);
+      expect(contents, '{"categories":[{"name":"trash1","subcategories":["yeet"]},{"name":"trash2","subcategories":[]}]}');
+
+      file.delete();
+    });
+ });
+}

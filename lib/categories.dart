@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+//TODO consider turning this into a class, specifically a static and singleton class
+//TODO refactor
+
 final path = '${Directory.current.path}/lib/categories.json';
 
 Future<Map> readJsonFileToMap(String filePath) async {
@@ -57,4 +60,36 @@ void addCategoryToJson(String categoryName, Map categories, [String? filePath]){
   File(usePath).writeAsString(jsonEncode(categoriesJson));
 }
 
-//TODO add subcategories
+Map addSubCategory(Map<String, List> categories, String category, String subcategory, Function saveSubcategory){
+  if (!categories.containsKey(category)){
+    throw Exception('category $category does not exist!');
+  }
+
+  if (categories[category]!.contains(subcategory)) {
+    throw Exception('subcategory $subcategory already exists in the category $category');
+  }
+
+  saveSubcategory(categories, category, subcategory);
+
+  categories[category]?.add(subcategory);
+
+  return categories;
+}
+
+void addSubCategoryToJson(Map<String, List> categories, String category, String subcategory, [String? filePath]){
+  var categoriesJson = {};
+
+  List categoriesList = [];
+
+  categories[category]?.add(subcategory);
+
+  for (var category in categories.keys){
+    categoriesList.add({'name':category, 'subcategories':categories[category]});
+  }
+  
+  categoriesJson['categories'] = categoriesList;
+
+  var usePath = (filePath == null) ? path: filePath;
+
+  File(usePath).writeAsString(jsonEncode(categoriesJson));
+}
