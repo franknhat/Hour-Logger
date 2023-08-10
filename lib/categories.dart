@@ -56,3 +56,5 @@ void addCategoryToJson(String categoryName, Map categories, [String? filePath]){
 
   File(usePath).writeAsString(jsonEncode(categoriesJson));
 }
+
+//TODO add subcategories
