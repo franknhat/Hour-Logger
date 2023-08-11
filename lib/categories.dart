@@ -1,95 +1,105 @@
 import 'dart:convert';
 import 'dart:io';
 
-//TODO consider turning this into a class, specifically a static and singleton class
-//TODO refactor
+//TODO refactor (consider separating Categories and the json functionality) class should follow SRP
 
-final path = '${Directory.current.path}/lib/categories.json';
+class Categories{
+  static final Categories _categories = Categories._internal();
 
-Future<Map> readJsonFileToMap(String filePath) async {
-  var fileData = await File(filePath).readAsString();
+  factory Categories(){
+    return _categories;
+  }
+
+  Categories._internal();
+  ///the lines above made the class a singleton
+
+  final _path = '${Directory.current.path}/lib/categories.json';
+
+  Future<Map> readJsonFileToMap(String filePath) async {
+    var fileData = await File(filePath).readAsString();
   
-  return jsonDecode(fileData);
-}
-
-Map parseJsonMap(dynamic map){
-  List<dynamic> listCategories = map["categories"];
-
-  var parsed = {};
-  
-  for (var element in listCategories) { 
-    parsed[element["name"].toString()] = element["subcategories"]; 
+    return jsonDecode(fileData);
   }
 
-  return parsed;
-}
+  Map parseJsonMap(dynamic map){
+    List<dynamic> listCategories = map["categories"];
 
-Future<Map> getCategories() async{
-  var rawData = await readJsonFileToMap(path);
+    var parsed = {};
+    
+    for (var element in listCategories) { 
+      parsed[element["name"].toString()] = element["subcategories"]; 
+    }
 
-  return parseJsonMap(rawData);
-}
-
-Map addCategory(String categoryName, Map categories, Function storeCategory){
-  if (categories.containsKey(categoryName)){
-    throw Exception('This category already exists');
-  }
-  
-  categories[categoryName] = [];
-
-  storeCategory(categoryName, categories);
-
-  return categories;
-}
-
-void addCategoryToJson(String categoryName, Map categories, [String? filePath]){
-  var categoriesJson = {};
-
-  List categoriesList = [];
-
-  for (var category in categories.keys){
-    categoriesList.add({'name':category, 'subcategories':categories[category]});
+    return parsed;
   }
 
-  categoriesList.add({'name': categoryName, 'subcategories':[]});
+  Future<Map> getCategories() async{
+    var rawData = await readJsonFileToMap(_path);
 
-  categoriesJson['categories'] = categoriesList;
-
-  var usePath = (filePath == null) ? path: filePath;
-
-  File(usePath).writeAsString(jsonEncode(categoriesJson));
-}
-
-Map addSubCategory(Map<String, List> categories, String category, String subcategory, Function saveSubcategory){
-  if (!categories.containsKey(category)){
-    throw Exception('category $category does not exist!');
+    return parseJsonMap(rawData);
   }
 
-  if (categories[category]!.contains(subcategory)) {
-    throw Exception('subcategory $subcategory already exists in the category $category');
+  Map addCategory(String categoryName, Map categories, Function storeCategory){
+    if (categories.containsKey(categoryName)){
+      throw Exception('This category already exists');
+    }
+    
+    categories[categoryName] = [];
+
+    storeCategory(categoryName, categories);
+
+    return categories;
   }
 
-  saveSubcategory(categories, category, subcategory);
+  void addCategoryToJson(String categoryName, Map categories, [String? filePath]){
+    var categoriesJson = {};
 
-  categories[category]?.add(subcategory);
+    List categoriesList = [];
 
-  return categories;
-}
+    for (var category in categories.keys){
+      categoriesList.add({'name':category, 'subcategories':categories[category]});
+    }
 
-void addSubCategoryToJson(Map<String, List> categories, String category, String subcategory, [String? filePath]){
-  var categoriesJson = {};
+    categoriesList.add({'name': categoryName, 'subcategories':[]});
 
-  List categoriesList = [];
+    categoriesJson['categories'] = categoriesList;
 
-  categories[category]?.add(subcategory);
+    var usePath = (filePath == null) ? _path: filePath;
 
-  for (var category in categories.keys){
-    categoriesList.add({'name':category, 'subcategories':categories[category]});
+    File(usePath).writeAsString(jsonEncode(categoriesJson));
   }
-  
-  categoriesJson['categories'] = categoriesList;
 
-  var usePath = (filePath == null) ? path: filePath;
+  Map addSubCategory(Map<String, List> categories, String category, String subcategory, Function saveSubcategory){
+    if (!categories.containsKey(category)){
+      throw Exception('category $category does not exist!');
+    }
 
-  File(usePath).writeAsString(jsonEncode(categoriesJson));
+    if (categories[category]!.contains(subcategory)) {
+      throw Exception('subcategory $subcategory already exists in the category $category');
+    }
+
+    saveSubcategory(categories, category, subcategory);
+
+    categories[category]?.add(subcategory);
+
+    return categories;
+  }
+
+  void addSubCategoryToJson(Map<String, List> categories, String category, String subcategory, [String? filePath]){
+    var categoriesJson = {};
+
+    List categoriesList = [];
+
+    categories[category]?.add(subcategory);
+
+    for (var category in categories.keys){
+      categoriesList.add({'name':category, 'subcategories':categories[category]});
+    }
+    
+    categoriesJson['categories'] = categoriesList;
+
+    var usePath = (filePath == null) ? _path: filePath;
+
+    File(usePath).writeAsString(jsonEncode(categoriesJson));
+  }
 }

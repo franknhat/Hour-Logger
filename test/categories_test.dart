@@ -13,7 +13,7 @@ void main(){
   test('readJsonFileToMap', () async {
     file.writeAsString('{"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]}');
     
-    expect((await readJsonFileToMap('${Directory.current.path}/test.json')).isNotEmpty, true);
+    expect((await Categories().readJsonFileToMap('${Directory.current.path}/test.json')).isNotEmpty, true);
   
     file.delete();
   });
@@ -21,15 +21,15 @@ void main(){
   test('parseJsonMap', () async { 
     var map = {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]};
     
-    expect(parseJsonMap(map), {"trash1":[], "trash2":["rubbish"]});
+    expect(Categories().parseJsonMap(map), {"trash1":[], "trash2":["rubbish"]});
   });
 
   group('add category', () {
     test('add category existing', () {      
-      expect(() => addCategory('trash1', {'trash1':[], 'trash2':[]}, (_, __) => {}), throwsException);
+      expect(() => Categories().addCategory('trash1', {'trash1':[], 'trash2':[]}, (_, __) => {}), throwsException);
     });
     test('add new categorg', () {
-      var returned = addCategory('trash3', {'trash1':[], 'trash2':[]}, (_, __) => {});
+      var returned = Categories().addCategory('trash3', {'trash1':[], 'trash2':[]}, (_, __) => {});
       
       expect(returned, {'trash1':[], 'trash2':[], 'trash3':[]});
     });
@@ -39,7 +39,7 @@ void main(){
     var categories = {'trash1':[], 'trash2':[]};
     file.writeAsString(categories.toString());
 
-    addCategoryToJson('trash3', categories, path);
+    Categories().addCategoryToJson('trash3', categories, path);
 
     var newCategories = await file.readAsString();
 
@@ -54,25 +54,25 @@ void main(){
     test('add subcategory to an existing category', () {
       var categories = {'trash1':[], 'trash2':[]};
 
-      expect(addSubCategory(categories, 'trash1', 'subcategory', (_, __, ___) => {}), {'trash1':['subcategory'], 'trash2':[]});
+      expect(Categories().addSubCategory(categories, 'trash1', 'subcategory', (_, __, ___) => {}), {'trash1':['subcategory'], 'trash2':[]});
     });
 
     test('try to add existing subcategory to existing category', () {
       var categories = {'trash1':['subcategory'], 'trash2':[]};
 
-      expect(() => addSubCategory(categories, 'trash1', 'subcategory', (_, __, ___) => {}), throwsException);
+      expect(() => Categories().addSubCategory(categories, 'trash1', 'subcategory', (_, __, ___) => {}), throwsException);
     });
 
     test('try to add subcategories to nonexisting categories', () {
       var categories = {'trash1':[], 'trash2':[]};
 
-      expect(() => addSubCategory(categories, 'NonExistant', 'should fail', (_, __, ___) => {}), throwsException);
+      expect(() => Categories().addSubCategory(categories, 'NonExistant', 'should fail', (_, __, ___) => {}), throwsException);
     });
 
     test('addSubCategoryToJson', () async {
       var categories = {'trash1':[], 'trash2':[]};
       
-      addSubCategoryToJson(categories, 'trash1', 'yeet', path);
+      Categories().addSubCategoryToJson(categories, 'trash1', 'yeet', path);
 
       var contents = await file.readAsString();
 
