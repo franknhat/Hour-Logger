@@ -39,7 +39,7 @@ void main(){
     var categories = {'trash1':[], 'trash2':[]};
     file.writeAsString(categories.toString());
 
-    Categories().addCategoryToJson('trash3', categories, path);
+    await Categories().addCategoryToJson('trash3', categories, path);
 
     var newCategories = await file.readAsString();
 
@@ -72,7 +72,7 @@ void main(){
     test('addSubCategoryToJson', () async {
       var categories = {'trash1':[], 'trash2':[]};
       
-      Categories().addSubCategoryToJson(categories, 'trash1', 'yeet', path);
+      await Categories().addSubCategoryToJson(categories, 'trash1', 'yeet', path);
 
       var contents = await file.readAsString();
 

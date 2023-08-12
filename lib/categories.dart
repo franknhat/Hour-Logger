@@ -4,10 +4,10 @@ import 'dart:io';
 //TODO refactor (consider separating Categories and the json functionality) class should follow SRP
 
 class Categories{
-  static final Categories _categories = Categories._internal();
+  static final Categories _categoriesClass = Categories._internal();
 
   factory Categories(){
-    return _categories;
+    return _categoriesClass;
   }
 
   Categories._internal();
@@ -51,7 +51,7 @@ class Categories{
     return categories;
   }
 
-  void addCategoryToJson(String categoryName, Map categories, [String? filePath]){
+  Future<void> addCategoryToJson(String categoryName, Map categories, [String? filePath]) async {
     var categoriesJson = {};
 
     List categoriesList = [];
@@ -66,7 +66,7 @@ class Categories{
 
     var usePath = (filePath == null) ? _path: filePath;
 
-    File(usePath).writeAsString(jsonEncode(categoriesJson));
+    await File(usePath).writeAsString(jsonEncode(categoriesJson));
   }
 
   Map addSubCategory(Map<String, List> categories, String category, String subcategory, Function saveSubcategory){
@@ -85,7 +85,7 @@ class Categories{
     return categories;
   }
 
-  void addSubCategoryToJson(Map<String, List> categories, String category, String subcategory, [String? filePath]){
+  Future<void> addSubCategoryToJson(Map<String, List> categories, String category, String subcategory, [String? filePath]) async{
     var categoriesJson = {};
 
     List categoriesList = [];
@@ -100,6 +100,6 @@ class Categories{
 
     var usePath = (filePath == null) ? _path: filePath;
 
-    File(usePath).writeAsString(jsonEncode(categoriesJson));
+    await File(usePath).writeAsString(jsonEncode(categoriesJson));
   }
 }
