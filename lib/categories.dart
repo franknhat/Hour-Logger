@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 //TODO refactor (consider separating Categories and the json functionality) class should follow SRP
 
 class Categories{
@@ -13,30 +10,26 @@ class Categories{
   Categories._internal();
   ///the lines above made the class a singleton
 
-  final _path = '${Directory.current.path}/lib/categories.json';
+  Set _categories = {};
+  Set get categories => _categories;
 
-  Future<Map> readJsonFileToMap(String filePath) async {
-    var fileData = await File(filePath).readAsString();
-  
-    return jsonDecode(fileData);
+  Map _subcategories = {};
+  Map get subcategories => _subcategories;
+
+  Function? _readCategoreies;
+  Function? _parseCategoreies;
+  Function? _saveCategories;
+
+  set readCategoreies(Function readCategoreies){
+    _readCategoreies = readCategoreies;
   }
 
-  Map parseJsonMap(dynamic map){
-    List<dynamic> listCategories = map["categories"];
-
-    var parsed = {};
-    
-    for (var element in listCategories) { 
-      parsed[element["name"].toString()] = element["subcategories"]; 
-    }
-
-    return parsed;
+  set parseCategoreies(Function parseCategoreies){
+    _parseCategoreies = parseCategoreies;
   }
 
-  Future<Map> getCategories() async{
-    var rawData = await readJsonFileToMap(_path);
-
-    return parseJsonMap(rawData);
+  set saveCategories(Function saveCategories){
+    _saveCategories = saveCategories;
   }
 
   Map addCategory(String categoryName, Map categories, Function storeCategory){
@@ -49,24 +42,6 @@ class Categories{
     storeCategory(categoryName, categories);
 
     return categories;
-  }
-
-  Future<void> addCategoryToJson(String categoryName, Map categories, [String? filePath]) async {
-    var categoriesJson = {};
-
-    List categoriesList = [];
-
-    for (var category in categories.keys){
-      categoriesList.add({'name':category, 'subcategories':categories[category]});
-    }
-
-    categoriesList.add({'name': categoryName, 'subcategories':[]});
-
-    categoriesJson['categories'] = categoriesList;
-
-    var usePath = (filePath == null) ? _path: filePath;
-
-    await File(usePath).writeAsString(jsonEncode(categoriesJson));
   }
 
   Map addSubCategory(Map<String, List> categories, String category, String subcategory, Function saveSubcategory){
@@ -83,23 +58,5 @@ class Categories{
     categories[category]?.add(subcategory);
 
     return categories;
-  }
-
-  Future<void> addSubCategoryToJson(Map<String, List> categories, String category, String subcategory, [String? filePath]) async{
-    var categoriesJson = {};
-
-    List categoriesList = [];
-
-    categories[category]?.add(subcategory);
-
-    for (var category in categories.keys){
-      categoriesList.add({'name':category, 'subcategories':categories[category]});
-    }
-    
-    categoriesJson['categories'] = categoriesList;
-
-    var usePath = (filePath == null) ? _path: filePath;
-
-    await File(usePath).writeAsString(jsonEncode(categoriesJson));
   }
 }
