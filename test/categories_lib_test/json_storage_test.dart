@@ -12,12 +12,16 @@ void main(){
 
   const testJsonMap = {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]};
 
-  setUp(() => file.writeAsString(testJsonMap.toString()));
+  setUp(() { 
+    file.createSync();
+    file.writeAsStringSync(testJsonMap.toString());
+    jsonFunctions.jsonMap = jsonDecode(jsonEncode(testJsonMap));
+  });
 
   tearDown(() => file.deleteSync());
 
   test('readJsonFileToMap', () async {
-    file.writeAsString('{"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]}');
+    file.writeAsStringSync('{"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]}');
     
     expect((await jsonFunctions.readJsonFileToMap('${Directory.current.path}/test.json')).isNotEmpty, true);
   
@@ -32,33 +36,42 @@ void main(){
 
   //TODO MOCK OR SPY THIS
   test('getCategories', () async {
-    file.writeAsString('{"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]}');
+    file.writeAsStringSync('{"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]}');
 
     expect(await jsonFunctions.getCategories(), {"trash1":[], "trash2":["rubbish"]});
 
   });
 
-  //TODO add more test cases for this senario
-  test('add category to json', () async {
-    //since the test map is nested, we cant do a normal deep copy else the test cases affect eachother still
-    jsonFunctions.jsonMap = json.decode(jsonEncode(testJsonMap));
+  group('add category to json', (){
+    test('add non existing category to json', () async {
+      await jsonFunctions.saveCategory('trash3');
 
-    await jsonFunctions.saveCategory('trash3');
+      var newCategories = jsonDecode(file.readAsStringSync());
 
-    var newCategories = jsonDecode(await file.readAsString());
+      expect(newCategories, {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}, {"name":"trash3", "subcategories":[]}]});
+    });
 
-    expect(newCategories, {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}, {"name":"trash3", "subcategories":[]}]});
+    test('add existing category to json', () async {
+      expect(() async => await jsonFunctions.saveCategory('trash1'), throwsException);
+    });
   });
 
   //TODO add more test cases for this senario
-  test('addSubCategoryToJson', () async {
-    //since the test map is nested, we cant do a normal deep copy else the test cases affect eachother still
-    jsonFunctions.jsonMap = json.decode(jsonEncode(testJsonMap));
+  group('addSubCategoryToJson', () {
+    test('add nonexisting subcategory to existing category', () async {     
+      await jsonFunctions.saveSubcategory('trash1', 'yeet');
+
+      var contents = jsonDecode(file.readAsStringSync());
+
+      expect(contents, {"categories":[{"name":"trash1","subcategories":["yeet"]},{"name":"trash2","subcategories":["rubbish"]}]});
+    });
     
-    await jsonFunctions.saveSubcategory('trash1', 'yeet');
+    test('add existing subcategory to existing category', () async {
+      expect(() async => await jsonFunctions.saveSubcategory('trash2','rubbish'), throwsException);
+    });
 
-    var contents = jsonDecode(await file.readAsString());
-
-    expect(contents, {"categories":[{"name":"trash1","subcategories":["yeet"]},{"name":"trash2","subcategories":["rubbish"]}]});
+    test('add existing subcategory to nonexisting category', () async {
+      expect(() async => await jsonFunctions.saveSubcategory('trash5','rubbish'), throwsException);
+    });
   });
 }

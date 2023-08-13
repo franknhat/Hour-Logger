@@ -20,37 +20,33 @@ class JsonCategories implements StoreCategory{
   
   @override
   Future<void> saveCategory(String category) async {
-    jsonMap['categories']?.add({'name':category, 'subcategories':[]});
+    categoryChecker(category,
+      ifFound: (foundCategoryMap) => throw Exception('category ${foundCategoryMap['name']} is already exists'),
+      ifNotFound: (){
+        jsonMap['categories']?.add({'name':category, 'subcategories':[]});
 
-    await File(path).writeAsString(jsonEncode(jsonMap));
+        File(path).writeAsStringSync(jsonEncode(jsonMap));
+      }
+    );
   }
   
   @override
   Future<void> saveSubcategory(String category, String subcategory) async{
-    //TODO implement Json saveSubcategory
-    int indexOfCategory = -1;
+    categoryChecker(category, 
+      ifNotFound: () => throw Exception('category $category was not found to add the subcategory $subcategory to'),
+      ifFound: (foundCategoryMap) {
+        if(foundCategoryMap['subcategories'].contains(subcategory)){
+          throw Exception('subcategory $subcategory already exists in the category $category');
+        }
 
-    for(var i = 0; i < jsonMap.length; i++){
-      if( jsonMap['categories'][i]['name'] == category){
-        indexOfCategory = i;
-        break;
+        foundCategoryMap['subcategories'].add(subcategory);
+
+        File(path).writeAsStringSync(jsonEncode(jsonMap));
       }
-    }
-
-    if (indexOfCategory == -1){
-      throw Exception('the category $category does not exist to add a subcategory to');
-    }
-
-    if(jsonMap['categories'][indexOfCategory]['subcategories'].contains(subcategory)){
-      throw Exception('subcategory $subcategory exists in the category $category');
-    }
-
-    jsonMap['categories'][indexOfCategory]['subcategories'].add(subcategory);
-
-    await File(path).writeAsString(jsonEncode(jsonMap));
+    );
   }
   
-    Future<Map> readJsonFileToMap(String filePath) async {
+  Future<Map> readJsonFileToMap(String filePath) async {
     var fileData = await File(filePath).readAsString();
   
     return jsonDecode(fileData);
@@ -66,5 +62,16 @@ class JsonCategories implements StoreCategory{
     }
 
     return parsed;
+  }
+
+  void categoryChecker(String category, {required Function ifFound, required Function ifNotFound}){
+    for(var categoryList in jsonMap['categories']){
+      if(categoryList['name'] == category){
+        ifFound(categoryList);
+        return;
+      }
+    }
+
+    ifNotFound();
   }
 }
