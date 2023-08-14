@@ -1,28 +1,31 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hour_logger/categories_lib/json_storage.dart';
+import 'package:mocktail/mocktail.dart';
 import 'dart:convert';
 import 'dart:io';
+
+class MockJsonCategories extends Mock implements JsonCategories {}
 
 void main(){
   var path = '${Directory.current.path}/test.json';
   var file = File(path);
 
-  var jsonFunctions = JsonCategories();
+  final jsonFunctions = JsonCategories();
   jsonFunctions.path = path;
+
+  final mockJsonFunctions = MockJsonCategories();
 
   const testJsonMap = {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]};
 
   setUp(() { 
     file.createSync();
-    file.writeAsStringSync(testJsonMap.toString());
+    file.writeAsStringSync(jsonEncode(testJsonMap));
     jsonFunctions.jsonMap = jsonDecode(jsonEncode(testJsonMap));
   });
 
   tearDown(() => file.deleteSync());
 
-  test('readJsonFileToMap', () async {
-    file.writeAsStringSync('{"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]}');
-    
+  test('readJsonFileToMap', () async {    
     expect((await jsonFunctions.readJsonFileToMap('${Directory.current.path}/test.json')).isNotEmpty, true);
   
     expect((await jsonFunctions.readJsonFileToMap('${Directory.current.path}/test.json')), {'categories':[{'name':'trash1', 'subcategories':[]},{'name':'trash2', 'subcategories':['rubbish']}]});
@@ -34,12 +37,17 @@ void main(){
     expect(jsonFunctions.parseJsonMap(map), {"trash1":[], "trash2":["rubbish"]});
   });
 
-  //TODO MOCK OR SPY THIS
   test('getCategories', () async {
-    file.writeAsStringSync('{"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]}');
+    //lmao I think im mocking wrong. I think mock is used for dependencies between classes, this calls for spy but its depreciated and in mockito not mocktail from what I can tell
+    when(() => mockJsonFunctions.readJsonFileToMap(any())).thenAnswer((invocation) async { return testJsonMap; });
+    when(() => mockJsonFunctions.parseJsonMap(any())).thenAnswer((invocation) => {"trash1":[], "trash2":["rubbish"]});
 
-    expect(await jsonFunctions.getCategories(), {"trash1":[], "trash2":["rubbish"]});
+    when(() => mockJsonFunctions.getCategories()).thenAnswer((invocation) async {return mockJsonFunctions.parseJsonMap(mockJsonFunctions.readJsonFileToMap('something')); });
 
+    expect(await mockJsonFunctions.getCategories(), {"trash1":[], "trash2":["rubbish"]});
+    verify(() => mockJsonFunctions.readJsonFileToMap(any())).called(1);
+    verify(() => mockJsonFunctions.parseJsonMap(any())).called(1);
+    verify(() => mockJsonFunctions.getCategories()).called(1);
   });
 
   group('add category to json', (){
@@ -56,7 +64,6 @@ void main(){
     });
   });
 
-  //TODO add more test cases for this senario
   group('addSubCategoryToJson', () {
     test('add nonexisting subcategory to existing category', () async {     
       await jsonFunctions.saveSubcategory('trash1', 'yeet');

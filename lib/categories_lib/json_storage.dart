@@ -3,7 +3,6 @@ import 'package:meta/meta.dart';
 import 'dart:convert';
 import 'dart:io';
 
-//TODO Refactor
 class JsonCategories implements StoreCategory{
   @visibleForTesting
   var path = '${Directory.current.path}/lib/categories.json';
