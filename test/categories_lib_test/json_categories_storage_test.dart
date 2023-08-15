@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hour_logger/categories_lib/json_storage.dart';
+import 'package:hour_logger/categories_lib/json_categories_storage.dart';
 import 'package:mocktail/mocktail.dart';
 import 'dart:convert';
 import 'dart:io';
