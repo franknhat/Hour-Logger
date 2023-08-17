@@ -5,7 +5,7 @@ import 'dart:io';
 
 class JsonCategories implements StoreCategory{
   @visibleForTesting
-  var path = '${Directory.current.path}/lib/categories.json';
+  var path = '${Directory.current.path}/lib/categories_lib/categories.json';
 
   @visibleForTesting
   Map jsonMap = {};

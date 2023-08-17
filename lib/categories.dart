@@ -9,7 +9,6 @@ class Categories{
 
   Categories._internal();
   ///the lines above made the class a singleton
-
   
   Map _categories = {};
   Map get categories => _categories;
