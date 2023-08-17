@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hour_logger/categories.dart';
-import 'package:hour_logger/categories_lib/storage_interface.dart';
+import 'package:hour_logger/categories_lib/categories_storage_interface.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockStorage extends Mock implements StoreCategory {}

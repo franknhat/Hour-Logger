@@ -1,4 +1,4 @@
-import 'storage_interface.dart';
+import 'categories_storage_interface.dart';
 import 'package:meta/meta.dart';
 import 'dart:convert';
 import 'dart:io';

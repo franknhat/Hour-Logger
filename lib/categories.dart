@@ -1,4 +1,4 @@
-import 'categories_lib/storage_interface.dart';
+import 'categories_lib/categories_storage_interface.dart';
 
 class Categories{
   static final Categories _categoriesClass = Categories._internal();
