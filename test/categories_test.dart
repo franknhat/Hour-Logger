@@ -26,42 +26,42 @@ void main() async {
 
   group('add category', () {
     test('add category existing', () { 
-      when(() => storage.saveCategory(any())).thenAnswer((invocation) async {});
+      when(() => storage.saveCategory(any(), any())).thenAnswer((invocation) async {});
       
       expect(() => Categories().addCategory('trash1'), throwsException);
       //should throw before even getting to storage.saveCategory
-      verifyNever(() => storage.saveCategory(any()));
+      verifyNever(() => storage.saveCategory(any(), any()));
     });
     test('add new categorg', () async {
-      when(() => storage.saveCategory(any())).thenAnswer((invocation) async {});
+      when(() => storage.saveCategory(any(), any())).thenAnswer((invocation) async {});
 
       Categories().addCategory('trash3');
       
       expect(Categories().categories, {'trash1':[], 'trash2':['rubbish'], 'trash3':[]});
-      verify(() => storage.saveCategory(any())).called(1);
+      verify(() => storage.saveCategory(any(), any())).called(1);
     });
   });
 
   group('add subcategories', () {
-    setUp(() => when(() => storage.saveSubcategory(any(), any())).thenAnswer((invocation) async {}));
+    setUp(() => when(() => storage.saveSubcategory(any(), any(), any())).thenAnswer((invocation) async {}));
     
     test('add subcategory to an existing category', () {
       Categories().addSubCategory('trash1', 'subcategory');
 
       expect(Categories().categories, {'trash1':['subcategory'], 'trash2':['rubbish']});
-      verify(() => storage.saveSubcategory(any(), any())).called(1);
+      verify(() => storage.saveSubcategory(any(), any(), any())).called(1);
     });
 
     test('try to add existing subcategory to existing category', () {
       expect(() => Categories().addSubCategory('trash2', 'rubbish'), throwsException);
       //should throw before even getting to storage.saveSubcategory
-      verifyNever(() => storage.saveSubcategory(any(), any()));
+      verifyNever(() => storage.saveSubcategory(any(), any(), any()));
     });
 
     test('try to add subcategories to nonexisting categories', () {
       expect(() => Categories().addSubCategory('NonExistant', 'should fail'), throwsException);
       //should throw before even getting to storage.saveSubcategory
-      verifyNever(() => storage.saveSubcategory(any(), any()));
+      verifyNever(() => storage.saveSubcategory(any(), any(), any()));
     });
  });
 }

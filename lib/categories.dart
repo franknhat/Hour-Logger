@@ -13,8 +13,8 @@ class Categories{
   Map _categories = {};
   Map get categories => _categories;
 
-  Function _saveCategory = (_) => {};
-  Function _saveSubcategory = (_, __) => {};
+  Function _saveCategory = (_, __) => {};
+  Function _saveSubcategory = (_, __, ___) => {};
 
   Future<void> setStorageMethod(StoreCategory method) async {
     _saveCategory = method.saveCategory;
@@ -23,17 +23,17 @@ class Categories{
     _categories = await method.getCategories();
   }
 
-  void addCategory(String categoryName){
+  void addCategory(String categoryName, {String description = ''}){
     if (categories.containsKey(categoryName)){
       throw Exception('This category already exists');
     }
     
     _categories[categoryName] = [];
 
-    _saveCategory(categoryName);
+    _saveCategory(categoryName, description);
   }
 
-  void addSubCategory(String category, String subcategory){
+  void addSubCategory(String category, String subcategory, {String description = ''}){
     if (!_categories.containsKey(category)){
       throw Exception('category $category does not exist!');
     }
@@ -42,7 +42,7 @@ class Categories{
       throw Exception('subcategory $subcategory already exists in the category $category');
     }
 
-    _saveSubcategory(category, subcategory);
+    _saveSubcategory(category, subcategory, description);
 
     _categories[category]?.add(subcategory);
   }

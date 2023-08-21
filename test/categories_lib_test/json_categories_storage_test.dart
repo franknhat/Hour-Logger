@@ -52,7 +52,7 @@ void main(){
 
   group('add category to json', (){
     test('add non existing category to json', () async {
-      await jsonFunctions.saveCategory('trash3');
+      await jsonFunctions.saveCategory('trash3', '');
 
       var newCategories = jsonDecode(file.readAsStringSync());
 
@@ -60,13 +60,13 @@ void main(){
     });
 
     test('add existing category to json', () async {
-      expect(() async => await jsonFunctions.saveCategory('trash1'), throwsException);
+      expect(() async => await jsonFunctions.saveCategory('trash1', ''), throwsException);
     });
   });
 
   group('addSubCategoryToJson', () {
     test('add nonexisting subcategory to existing category', () async {     
-      await jsonFunctions.saveSubcategory('trash1', 'yeet');
+      await jsonFunctions.saveSubcategory('trash1', 'yeet', '');
 
       var contents = jsonDecode(file.readAsStringSync());
 
@@ -74,11 +74,11 @@ void main(){
     });
     
     test('add existing subcategory to existing category', () async {
-      expect(() async => await jsonFunctions.saveSubcategory('trash2','rubbish'), throwsException);
+      expect(() async => await jsonFunctions.saveSubcategory('trash2','rubbish', ''), throwsException);
     });
 
     test('add existing subcategory to nonexisting category', () async {
-      expect(() async => await jsonFunctions.saveSubcategory('trash5','rubbish'), throwsException);
+      expect(() async => await jsonFunctions.saveSubcategory('trash5','rubbish', ''), throwsException);
     });
   });
 }

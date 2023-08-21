@@ -18,7 +18,7 @@ class JsonCategories implements StoreCategory{
   }
   
   @override
-  Future<void> saveCategory(String category) async {
+  Future<void> saveCategory(String category, String description) async {
     categoryChecker(category,
       ifFound: (foundCategoryMap) => throw Exception('category ${foundCategoryMap['name']} is already exists'),
       ifNotFound: (){
@@ -30,7 +30,7 @@ class JsonCategories implements StoreCategory{
   }
   
   @override
-  Future<void> saveSubcategory(String category, String subcategory) async{
+  Future<void> saveSubcategory(String category, String subcategory, String description) async{
     categoryChecker(category, 
       ifNotFound: () => throw Exception('category $category was not found to add the subcategory $subcategory to'),
       ifFound: (foundCategoryMap) {
