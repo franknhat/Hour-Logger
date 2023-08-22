@@ -40,11 +40,11 @@ void main(){
   test('getCategories\n', () async {
     //lmao I think im mocking wrong. I think mock is used for dependencies between classes, this calls for spy but its depreciated and in mockito not mocktail from what I can tell
     when(() => mockJsonFunctions.readJsonFileToMap(any())).thenAnswer((invocation) async { return testJsonMap; });
-    when(() => mockJsonFunctions.parseJsonMap(any())).thenAnswer((invocation) => {"trash1":[], "trash2":[{"name":"rubbish", "description":""}]});
+    when(() => mockJsonFunctions.parseJsonMap(any())).thenAnswer((invocation) => {"trash1":{"subcategories":[], "description":""}, "trash2":{"subcategories":[{"name":"rubbish", "description":""}], "description":""}});
 
     when(() => mockJsonFunctions.getCategories()).thenAnswer((invocation) async {return mockJsonFunctions.parseJsonMap(mockJsonFunctions.readJsonFileToMap('something')); });
 
-    expect(await mockJsonFunctions.getCategories(), {"trash1":[], "trash2":[{"name":"rubbish", "description":""}]});
+    expect(await mockJsonFunctions.getCategories(), {"trash1":{"subcategories":[], "description":""}, "trash2":{"subcategories":[{"name":"rubbish", "description":""}], "description":""}});
     verify(() => mockJsonFunctions.readJsonFileToMap(any())).called(1);
     verify(() => mockJsonFunctions.parseJsonMap(any())).called(1);
     verify(() => mockJsonFunctions.getCategories()).called(1);
