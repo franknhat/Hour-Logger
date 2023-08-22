@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'dart:convert';
 import 'dart:io';
 
+//TODO: REFORMAT THE CHANGE CORRECTLY, CONSIDER REDOING THE WHOLE FILE + TESTING
 class JsonCategories implements StoreCategory{
   @visibleForTesting
   var path = '${Directory.current.path}/lib/categories_lib/categories.json';
@@ -22,7 +23,7 @@ class JsonCategories implements StoreCategory{
     categoryChecker(category,
       ifFound: (foundCategoryMap) => throw Exception('category ${foundCategoryMap['name']} is already exists'),
       ifNotFound: (){
-        jsonMap['categories']?.add({'name':category, 'subcategories':[]});
+        jsonMap['categories']?.add({'name':category, 'subcategories':[], 'description':description});
 
         File(path).writeAsStringSync(jsonEncode(jsonMap));
       }
@@ -34,11 +35,12 @@ class JsonCategories implements StoreCategory{
     categoryChecker(category, 
       ifNotFound: () => throw Exception('category $category was not found to add the subcategory $subcategory to'),
       ifFound: (foundCategoryMap) {
-        if(foundCategoryMap['subcategories'].contains(subcategory)){
+        // TODO: consider if refactor is needed
+        if(foundCategoryMap['subcategories'].indexWhere((someSubcategory) => someSubcategory['name'] == subcategory) != -1){
           throw Exception('subcategory $subcategory already exists in the category $category');
         }
 
-        foundCategoryMap['subcategories'].add(subcategory);
+        foundCategoryMap['subcategories'].add({'name':subcategory, 'description':description});
 
         File(path).writeAsStringSync(jsonEncode(jsonMap));
       }

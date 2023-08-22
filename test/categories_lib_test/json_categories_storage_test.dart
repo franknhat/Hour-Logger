@@ -6,6 +6,8 @@ import 'dart:io';
 
 class MockJsonCategories extends Mock implements JsonCategories {}
 
+// TODO: consider if refactor is needed
+
 void main(){
   var path = '${Directory.current.path}/test.json';
   var file = File(path);
@@ -15,7 +17,7 @@ void main(){
 
   final mockJsonFunctions = MockJsonCategories();
 
-  const testJsonMap = {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]};
+  const testJsonMap = {"categories":[{"name":"trash1", "subcategories":[], "description":''},{"name":"trash2", "subcategories":[{"name":"rubbish", "description":''}], "description":""}]};
 
   setUp(() { 
     file.createSync();
@@ -28,23 +30,23 @@ void main(){
   test('readJsonFileToMap', () async {    
     expect((await jsonFunctions.readJsonFileToMap('${Directory.current.path}/test.json')).isNotEmpty, true);
   
-    expect((await jsonFunctions.readJsonFileToMap('${Directory.current.path}/test.json')), {'categories':[{'name':'trash1', 'subcategories':[]},{'name':'trash2', 'subcategories':['rubbish']}]});
+    expect((await jsonFunctions.readJsonFileToMap('${Directory.current.path}/test.json')), {"categories":[{"name":"trash1", "subcategories":[], "description":''},{"name":"trash2", "subcategories":[{"name":"rubbish", "description":''}], "description":""}]});
   });
 
   test('parseJsonMap', () async { 
-    var map = {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]};
+    var map = {"categories":[{"name":"trash1", "subcategories":[], "description":''},{"name":"trash2", "subcategories":[{"name":"rubbish", "description":''}]}]};
     
-    expect(jsonFunctions.parseJsonMap(map), {"trash1":[], "trash2":["rubbish"]});
+    expect(jsonFunctions.parseJsonMap(map), {"trash1":[], "trash2":[{"name":"rubbish", "description":""}]});
   });
 
   test('getCategories', () async {
     //lmao I think im mocking wrong. I think mock is used for dependencies between classes, this calls for spy but its depreciated and in mockito not mocktail from what I can tell
     when(() => mockJsonFunctions.readJsonFileToMap(any())).thenAnswer((invocation) async { return testJsonMap; });
-    when(() => mockJsonFunctions.parseJsonMap(any())).thenAnswer((invocation) => {"trash1":[], "trash2":["rubbish"]});
+    when(() => mockJsonFunctions.parseJsonMap(any())).thenAnswer((invocation) => {"trash1":[], "trash2":[{"name":"rubbish", "description":""}]});
 
     when(() => mockJsonFunctions.getCategories()).thenAnswer((invocation) async {return mockJsonFunctions.parseJsonMap(mockJsonFunctions.readJsonFileToMap('something')); });
 
-    expect(await mockJsonFunctions.getCategories(), {"trash1":[], "trash2":["rubbish"]});
+    expect(await mockJsonFunctions.getCategories(), {"trash1":[], "trash2":[{"name":"rubbish", "description":""}]});
     verify(() => mockJsonFunctions.readJsonFileToMap(any())).called(1);
     verify(() => mockJsonFunctions.parseJsonMap(any())).called(1);
     verify(() => mockJsonFunctions.getCategories()).called(1);
@@ -56,7 +58,7 @@ void main(){
 
       var newCategories = jsonDecode(file.readAsStringSync());
 
-      expect(newCategories, {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}, {"name":"trash3", "subcategories":[]}]});
+      expect(newCategories, {"categories":[{"name":"trash1", "subcategories":[], "description":""},{"name":"trash2", "subcategories":[{"name":"rubbish", "description":""}], "description":""}, {"name":"trash3", "subcategories":[], "description":""}]});
     });
 
     test('add existing category to json', () async {
@@ -70,7 +72,7 @@ void main(){
 
       var contents = jsonDecode(file.readAsStringSync());
 
-      expect(contents, {"categories":[{"name":"trash1","subcategories":["yeet"]},{"name":"trash2","subcategories":["rubbish"]}]});
+      expect(contents, {"categories":[{"name":"trash1","subcategories":[{"name":"yeet", "description":""}], "description":""},{"name":"trash2","subcategories":[{"name":"rubbish", "description":""}], "description":""}]});
     });
     
     test('add existing subcategory to existing category', () async {
