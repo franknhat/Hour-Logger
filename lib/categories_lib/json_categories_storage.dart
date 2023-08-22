@@ -59,7 +59,7 @@ class JsonCategories implements StoreCategory{
     var parsed = {};
     
     for (var element in listCategories) { 
-      parsed[element["name"].toString()] = element["subcategories"]; 
+      parsed[element["name"].toString()] = { "subcategories" : element["subcategories"], "description": element["description"]}; 
     }
 
     return parsed;
