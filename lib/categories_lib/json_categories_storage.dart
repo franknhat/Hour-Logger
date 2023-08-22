@@ -35,7 +35,6 @@ class JsonCategories implements StoreCategory{
     categoryChecker(category, 
       ifNotFound: () => throw Exception('category $category was not found to add the subcategory $subcategory to'),
       ifFound: (foundCategoryMap) {
-        // TODO: consider if refactor is needed
         if(foundCategoryMap['subcategories'].indexWhere((someSubcategory) => someSubcategory['name'] == subcategory) != -1){
           throw Exception('subcategory $subcategory already exists in the category $category');
         }

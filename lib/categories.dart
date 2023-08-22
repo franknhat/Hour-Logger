@@ -28,7 +28,7 @@ class Categories{
       throw Exception('This category already exists');
     }
     
-    _categories[categoryName] = [];
+    _categories[categoryName] = {'subcategories':[], 'description':description};
 
     _saveCategory(categoryName, description);
   }
@@ -38,12 +38,12 @@ class Categories{
       throw Exception('category $category does not exist!');
     }
 
-    if (_categories[category]!.contains(subcategory)) {
+    if (_categories[category]["subcategories"].indexWhere((someSubcategory) => someSubcategory['name'] == subcategory) != -1) {
       throw Exception('subcategory $subcategory already exists in the category $category');
     }
 
     _saveSubcategory(category, subcategory, description);
 
-    _categories[category]?.add(subcategory);
+    _categories[category]["subcategories"]?.add({"name":subcategory, "description":description});
   }
 }
