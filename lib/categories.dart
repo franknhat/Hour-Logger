@@ -12,6 +12,7 @@ class Categories{
   
   Map _categories = {};
   Map get categories => _categories;
+  //consider adding comment of expected format
 
   Function _saveCategory = (_, __) => {};
   Function _saveSubcategory = (_, __, ___) => {};
@@ -21,6 +22,7 @@ class Categories{
     _saveSubcategory = method.saveSubcategory;
 
     _categories = await method.getCategories();
+    //consider running/making a function to validate the format
   }
 
   void addCategory(String categoryName, {String description = ''}){
@@ -38,6 +40,7 @@ class Categories{
       throw Exception('category $category does not exist!');
     }
 
+    //Is this part dry/readable?
     if (_categories[category]["subcategories"].indexWhere((someSubcategory) => someSubcategory['name'] == subcategory) != -1) {
       throw Exception('subcategory $subcategory already exists in the category $category');
     }
@@ -46,4 +49,8 @@ class Categories{
 
     _categories[category]["subcategories"]?.add({"name":subcategory, "description":description});
   }
+
+  //TODO: Remove categories
+  //TODO: Remove subcategories
+  //TODO: Change Descriptions
 }

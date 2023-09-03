@@ -74,4 +74,8 @@ class JsonCategories implements StoreCategory{
 
     ifNotFound();
   }
+
+  //TODO: Remove categories
+  //TODO: Remove subcategories
+  //TODO: Change Descriptions
 }
