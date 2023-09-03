@@ -15,7 +15,7 @@ void main(){
 
   final mockJsonFunctions = MockJsonCategories();
 
-  const testJsonMap = {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]};
+  const testJsonMap = {"categories":[{"name":"trash1", "subcategories":[], "description":''},{"name":"trash2", "subcategories":[{"name":"rubbish", "description":''}], "description":""}]};
 
   setUp(() { 
     file.createSync();
@@ -25,60 +25,60 @@ void main(){
 
   tearDown(() => file.deleteSync());
 
-  test('readJsonFileToMap', () async {    
+  test('readJsonFileToMap\n', () async {    
     expect((await jsonFunctions.readJsonFileToMap('${Directory.current.path}/test.json')).isNotEmpty, true);
   
-    expect((await jsonFunctions.readJsonFileToMap('${Directory.current.path}/test.json')), {'categories':[{'name':'trash1', 'subcategories':[]},{'name':'trash2', 'subcategories':['rubbish']}]});
+    expect((await jsonFunctions.readJsonFileToMap('${Directory.current.path}/test.json')), {"categories":[{"name":"trash1", "subcategories":[], "description":''},{"name":"trash2", "subcategories":[{"name":"rubbish", "description":''}], "description":""}]});
   });
 
-  test('parseJsonMap', () async { 
-    var map = {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}]};
+  test('parseJsonMap\n', () async { 
+    var map = {"categories":[{"name":"trash1", "subcategories":[], "description":''},{"name":"trash2", "subcategories":[{"name":"rubbish", "description":''}], "description":''}]};
     
-    expect(jsonFunctions.parseJsonMap(map), {"trash1":[], "trash2":["rubbish"]});
+    expect(jsonFunctions.parseJsonMap(map), {"trash1":{"subcategories":[], "description":""}, "trash2":{"subcategories":[{"name":"rubbish", "description":""}], "description":""}});
   });
 
-  test('getCategories', () async {
+  test('getCategories\n', () async {
     //lmao I think im mocking wrong. I think mock is used for dependencies between classes, this calls for spy but its depreciated and in mockito not mocktail from what I can tell
     when(() => mockJsonFunctions.readJsonFileToMap(any())).thenAnswer((invocation) async { return testJsonMap; });
-    when(() => mockJsonFunctions.parseJsonMap(any())).thenAnswer((invocation) => {"trash1":[], "trash2":["rubbish"]});
+    when(() => mockJsonFunctions.parseJsonMap(any())).thenAnswer((invocation) => {"trash1":{"subcategories":[], "description":""}, "trash2":{"subcategories":[{"name":"rubbish", "description":""}], "description":""}});
 
     when(() => mockJsonFunctions.getCategories()).thenAnswer((invocation) async {return mockJsonFunctions.parseJsonMap(mockJsonFunctions.readJsonFileToMap('something')); });
 
-    expect(await mockJsonFunctions.getCategories(), {"trash1":[], "trash2":["rubbish"]});
+    expect(await mockJsonFunctions.getCategories(), {"trash1":{"subcategories":[], "description":""}, "trash2":{"subcategories":[{"name":"rubbish", "description":""}], "description":""}});
     verify(() => mockJsonFunctions.readJsonFileToMap(any())).called(1);
     verify(() => mockJsonFunctions.parseJsonMap(any())).called(1);
     verify(() => mockJsonFunctions.getCategories()).called(1);
   });
 
-  group('add category to json', (){
-    test('add non existing category to json', () async {
-      await jsonFunctions.saveCategory('trash3');
+  group('add category to json:\n', (){
+    test(' - add non existing category to json\n', () async {
+      await jsonFunctions.saveCategory('trash3', '');
 
       var newCategories = jsonDecode(file.readAsStringSync());
 
-      expect(newCategories, {"categories":[{"name":"trash1", "subcategories":[]},{"name":"trash2", "subcategories":["rubbish"]}, {"name":"trash3", "subcategories":[]}]});
+      expect(newCategories, {"categories":[{"name":"trash1", "subcategories":[], "description":""},{"name":"trash2", "subcategories":[{"name":"rubbish", "description":""}], "description":""}, {"name":"trash3", "subcategories":[], "description":""}]});
     });
 
-    test('add existing category to json', () async {
-      expect(() async => await jsonFunctions.saveCategory('trash1'), throwsException);
+    test(' - add existing category to json\n', () async {
+      expect(() async => await jsonFunctions.saveCategory('trash1', ''), throwsException);
     });
   });
 
-  group('addSubCategoryToJson', () {
-    test('add nonexisting subcategory to existing category', () async {     
-      await jsonFunctions.saveSubcategory('trash1', 'yeet');
+  group('addSubCategoryToJson:\n', () {
+    test(' - add nonexisting subcategory to existing category\n', () async {     
+      await jsonFunctions.saveSubcategory('trash1', 'yeet', '');
 
       var contents = jsonDecode(file.readAsStringSync());
 
-      expect(contents, {"categories":[{"name":"trash1","subcategories":["yeet"]},{"name":"trash2","subcategories":["rubbish"]}]});
+      expect(contents, {"categories":[{"name":"trash1","subcategories":[{"name":"yeet", "description":""}], "description":""},{"name":"trash2","subcategories":[{"name":"rubbish", "description":""}], "description":""}]});
     });
     
-    test('add existing subcategory to existing category', () async {
-      expect(() async => await jsonFunctions.saveSubcategory('trash2','rubbish'), throwsException);
+    test(' - add existing subcategory to existing category\n', () async {
+      expect(() async => await jsonFunctions.saveSubcategory('trash2','rubbish', ''), throwsException);
     });
 
-    test('add existing subcategory to nonexisting category', () async {
-      expect(() async => await jsonFunctions.saveSubcategory('trash5','rubbish'), throwsException);
+    test(' - add existing subcategory to nonexisting category\n', () async {
+      expect(() async => await jsonFunctions.saveSubcategory('trash5','rubbish', ''), throwsException);
     });
   });
 }

@@ -2,11 +2,15 @@
     "categories":[
       {
         "name":"trash1", 
-        "subcategories":[]
+        "subcategories":[],
+        "description":""
       },
       {
         "name":"trash2", 
-        "subcategories":["rubbish"]
+        "subcategories":[
+          {"name":"rubbish","description":""}
+        ],
+        "description":""
       }
     ]
 }

@@ -9,7 +9,7 @@ void main() async {
   final storage = MockStorage();
 
   setUp(() async {
-    when(() => storage.getCategories()).thenAnswer((invocation) async { return {"trash1":[], "trash2":["rubbish"]}; });
+    when(() => storage.getCategories()).thenAnswer((invocation) async { return {"trash1":{"subcategories":[], "description":""}, "trash2":{"subcategories":[{"name":"rubbish", "description":""}], "description":""}}; });
     await Categories().setStorageMethod(storage);
   });
 
@@ -19,49 +19,49 @@ void main() async {
     expect(true, true)
   });
 
-  test('setStorageMethod calls get getCategories', () async {        
+  test('setStorageMethod calls get getCategories\n', () async {        
     verify(() => storage.getCategories()).called(1);
-    expect(Categories().categories, {"trash1":[], "trash2":["rubbish"]});
+    expect(Categories().categories, {"trash1":{"subcategories":[], "description":""}, "trash2":{"subcategories":[{"name":"rubbish", "description":""}], "description":""}});
   });
 
-  group('add category', () {
-    test('add category existing', () { 
-      when(() => storage.saveCategory(any())).thenAnswer((invocation) async {});
+  group('add category:\n', () {
+    test(' - add category existing\n', () { 
+      when(() => storage.saveCategory(any(), any())).thenAnswer((invocation) async {});
       
       expect(() => Categories().addCategory('trash1'), throwsException);
       //should throw before even getting to storage.saveCategory
-      verifyNever(() => storage.saveCategory(any()));
+      verifyNever(() => storage.saveCategory(any(), any()));
     });
-    test('add new categorg', () async {
-      when(() => storage.saveCategory(any())).thenAnswer((invocation) async {});
+    test(' - add new category\n', () async {
+      when(() => storage.saveCategory(any(), any())).thenAnswer((invocation) async {});
 
       Categories().addCategory('trash3');
       
-      expect(Categories().categories, {'trash1':[], 'trash2':['rubbish'], 'trash3':[]});
-      verify(() => storage.saveCategory(any())).called(1);
+      expect(Categories().categories, {"trash1":{"subcategories":[], "description":""}, "trash2":{"subcategories":[{"name":"rubbish", "description":""}], "description":""}, "trash3":{"subcategories":[], "description":""}});
+      verify(() => storage.saveCategory(any(), any())).called(1);
     });
   });
 
-  group('add subcategories', () {
-    setUp(() => when(() => storage.saveSubcategory(any(), any())).thenAnswer((invocation) async {}));
+  group('add subcategories:\n', () {
+    setUp(() => when(() => storage.saveSubcategory(any(), any(), any())).thenAnswer((invocation) async {}));
     
-    test('add subcategory to an existing category', () {
+    test(' - add subcategory to an existing category\n', () {
       Categories().addSubCategory('trash1', 'subcategory');
 
-      expect(Categories().categories, {'trash1':['subcategory'], 'trash2':['rubbish']});
-      verify(() => storage.saveSubcategory(any(), any())).called(1);
+      expect(Categories().categories, {"trash1":{"subcategories":[{'name':'subcategory', 'description':''}], "description":""}, "trash2":{"subcategories":[{"name":"rubbish", "description":""}], "description":""}});
+      verify(() => storage.saveSubcategory(any(), any(), any())).called(1);
     });
 
-    test('try to add existing subcategory to existing category', () {
+    test(' - try to add existing subcategory to existing category\n', () {
       expect(() => Categories().addSubCategory('trash2', 'rubbish'), throwsException);
       //should throw before even getting to storage.saveSubcategory
-      verifyNever(() => storage.saveSubcategory(any(), any()));
+      verifyNever(() => storage.saveSubcategory(any(), any(), any()));
     });
 
-    test('try to add subcategories to nonexisting categories', () {
+    test(' - try to add subcategories to nonexisting categories\n', () {
       expect(() => Categories().addSubCategory('NonExistant', 'should fail'), throwsException);
       //should throw before even getting to storage.saveSubcategory
-      verifyNever(() => storage.saveSubcategory(any(), any()));
+      verifyNever(() => storage.saveSubcategory(any(), any(), any()));
     });
  });
 }

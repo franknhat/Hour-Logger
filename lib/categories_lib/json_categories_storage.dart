@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'dart:convert';
 import 'dart:io';
 
+//TODO: REFORMAT THE CHANGE CORRECTLY, CONSIDER REDOING THE WHOLE FILE + TESTING
 class JsonCategories implements StoreCategory{
   @visibleForTesting
   var path = '${Directory.current.path}/lib/categories_lib/categories.json';
@@ -18,11 +19,11 @@ class JsonCategories implements StoreCategory{
   }
   
   @override
-  Future<void> saveCategory(String category) async {
+  Future<void> saveCategory(String category, String description) async {
     categoryChecker(category,
       ifFound: (foundCategoryMap) => throw Exception('category ${foundCategoryMap['name']} is already exists'),
       ifNotFound: (){
-        jsonMap['categories']?.add({'name':category, 'subcategories':[]});
+        jsonMap['categories']?.add({'name':category, 'subcategories':[], 'description':description});
 
         File(path).writeAsStringSync(jsonEncode(jsonMap));
       }
@@ -30,15 +31,15 @@ class JsonCategories implements StoreCategory{
   }
   
   @override
-  Future<void> saveSubcategory(String category, String subcategory) async{
+  Future<void> saveSubcategory(String category, String subcategory, String description) async{
     categoryChecker(category, 
       ifNotFound: () => throw Exception('category $category was not found to add the subcategory $subcategory to'),
       ifFound: (foundCategoryMap) {
-        if(foundCategoryMap['subcategories'].contains(subcategory)){
+        if(foundCategoryMap['subcategories'].indexWhere((someSubcategory) => someSubcategory['name'] == subcategory) != -1){
           throw Exception('subcategory $subcategory already exists in the category $category');
         }
 
-        foundCategoryMap['subcategories'].add(subcategory);
+        foundCategoryMap['subcategories'].add({'name':subcategory, 'description':description});
 
         File(path).writeAsStringSync(jsonEncode(jsonMap));
       }
@@ -57,7 +58,7 @@ class JsonCategories implements StoreCategory{
     var parsed = {};
     
     for (var element in listCategories) { 
-      parsed[element["name"].toString()] = element["subcategories"]; 
+      parsed[element["name"].toString()] = { "subcategories" : element["subcategories"], "description": element["description"]}; 
     }
 
     return parsed;
@@ -73,4 +74,8 @@ class JsonCategories implements StoreCategory{
 
     ifNotFound();
   }
+
+  //TODO: Remove categories
+  //TODO: Remove subcategories
+  //TODO: Change Descriptions
 }
