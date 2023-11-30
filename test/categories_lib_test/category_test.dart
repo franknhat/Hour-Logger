@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hour_logger/categories_lib/category.dart';
 
 void main(){
+  test('canary test', () => expect(true, true));
+
   group('test category constructor\n', () { 
     testCategoryConstructor();
     testCategoryConstructor(parent: Category('some Parent'));
